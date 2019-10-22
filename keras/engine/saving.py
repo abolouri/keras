@@ -17,9 +17,12 @@ from functools import wraps
 import numpy as np
 
 from .. import backend as K
+from .. import losses
 from .. import optimizers
-from ..utils.io_utils import ask_to_proceed_with_overwrite
 from ..utils.io_utils import H5Dict
+from ..utils.io_utils import ask_to_proceed_with_overwrite
+from ..utils.io_utils import save_to_binary_h5py
+from ..utils.io_utils import load_from_binary_h5py
 from ..utils import conv_utils
 
 try:
@@ -37,6 +40,34 @@ try:
     getargspec = inspect.getfullargspec
 except AttributeError:  # getargspec() is deprecated since Python 3.0
     getargspec = inspect.getargspec
+
+
+def _uniquify(names):
+    """Uniquify list of strings.
+
+    Custom layers and optimizers written by users
+    for TF 1.x might produce weights with same variable
+    names in TF 2. This method "uniquifies" a given list
+    of names.
+
+    e.g: `['a', 'b', 'b', 'c'] -> ['a', 'b', 'b_2', 'c']`
+
+    # Arguments
+        names: List of strings.
+
+    # Returns
+        List of unique strings.
+    """
+    counts = {}
+    unique_names = []
+    for name in names:
+        if name in counts:
+            counts[name] += 1
+            name = str(name) + '_' + str(counts[name])
+        else:
+            counts[name] = 1
+        unique_names.append(name)
+    return unique_names
 
 
 def _serialize_model(model, h5dict, include_optimizer=True):
@@ -124,6 +155,7 @@ def _serialize_model(model, h5dict, include_optimizer=True):
                     idx += 1
                 name = unique_name
             weight_names.append(name.encode('utf8'))
+        weight_names = _uniquify(weight_names)
         layer_group['weight_names'] = weight_names
         for name, val in zip(weight_names, weight_values):
             layer_group[name] = val
@@ -147,8 +179,8 @@ def _serialize_model(model, h5dict, include_optimizer=True):
                     'config': model.optimizer.get_config()
                 },
                 'loss': model.loss,
-                'metrics': model.metrics,
-                'weighted_metrics': model.weighted_metrics,
+                'metrics': model._compile_metrics,
+                'weighted_metrics': model._compile_weighted_metrics,
                 'sample_weight_mode': model.sample_weight_mode,
                 'loss_weights': model.loss_weights,
             }, default=get_json_type).encode('utf8')
@@ -182,6 +214,7 @@ def _serialize_model(model, h5dict, include_optimizer=True):
                             idx += 1
                         name = unique_name
                     weight_names.append(name.encode('utf8'))
+                weight_names = _uniquify(weight_names)
                 optimizer_weights_group['weight_names'] = weight_names
                 for name, val in zip(weight_names, weight_values):
                     optimizer_weights_group[name] = val
@@ -315,8 +348,15 @@ def _deserialize_model(h5dict, custom_objects=None, compile=True):
                                            custom_objects=custom_objects)
 
         # Recover loss functions and metrics.
-        loss = convert_custom_objects(training_config['loss'])
+        loss_config = training_config['loss']  # Deserialize loss class.
+        if isinstance(loss_config, dict) and 'class_name' in loss_config:
+            loss_config = losses.get(loss_config)
+        loss = convert_custom_objects(loss_config)
         metrics = convert_custom_objects(training_config['metrics'])
+        # Earlier versions of keras didn't dump weighted_metrics properly. Use
+        # a get to avoid failing if the key is missing
+        weighted_metrics = convert_custom_objects(
+            training_config.get('weighted_metrics'))
         sample_weight_mode = training_config['sample_weight_mode']
         loss_weights = training_config['loss_weights']
 
@@ -324,6 +364,7 @@ def _deserialize_model(h5dict, custom_objects=None, compile=True):
         model.compile(optimizer=optimizer,
                       loss=loss,
                       metrics=metrics,
+                      weighted_metrics=weighted_metrics,
                       loss_weights=loss_weights,
                       sample_weight_mode=sample_weight_mode)
 
@@ -475,8 +516,10 @@ def save_model(model, filepath, overwrite=True, include_optimizer=True):
     # Arguments
         model: Keras model instance to be saved.
         filepath: one of the following:
-            - string, path where to save the model, or
+            - string, path to the file to save the model to
             - h5py.File or h5py.Group object where to save the model
+            - any file-like object implementing the method `write` that accepts
+                `bytes` data (e.g. `io.BytesIO`).
         overwrite: Whether we should overwrite any existing
             model at the target location, or instead
             ask the user with a manual prompt.
@@ -488,22 +531,21 @@ def save_model(model, filepath, overwrite=True, include_optimizer=True):
     if h5py is None:
         raise ImportError('`save_model` requires h5py.')
 
-    if not isinstance(filepath, h5py.Group):
-        # If file exists and should not be overwritten.
-        if not overwrite and os.path.isfile(filepath):
+    if H5Dict.is_supported_type(filepath):
+        opens_file = not isinstance(filepath, (dict, h5py.Group))
+        if opens_file and os.path.isfile(filepath) and not overwrite:
             proceed = ask_to_proceed_with_overwrite(filepath)
             if not proceed:
                 return
-        opened_new_file = True
+        with H5Dict(filepath, mode='w') as h5dict:
+            _serialize_model(model, h5dict, include_optimizer)
+    elif hasattr(filepath, 'write') and callable(filepath.write):
+        # write as binary stream
+        def save_function(h5file):
+            _serialize_model(model, H5Dict(h5file), include_optimizer)
+        save_to_binary_h5py(save_function, filepath)
     else:
-        opened_new_file = False
-
-    h5dict = H5Dict(filepath, mode='w')
-    try:
-        _serialize_model(model, h5dict, include_optimizer)
-    finally:
-        if opened_new_file:
-            h5dict.close()
+        raise ValueError('unexpected type {} for `filepath`'.format(type(filepath)))
 
 
 @allow_read_from_gcs
@@ -512,8 +554,10 @@ def load_model(filepath, custom_objects=None, compile=True):
 
     # Arguments
         filepath: one of the following:
-            - string, path to the saved model, or
+            - string, path to the saved model
             - h5py.File or h5py.Group object from which to load the model
+            - any file-like object implementing the method `read` that returns
+            `bytes` data (e.g. `io.BytesIO`) that represents a valid h5py file image.
         custom_objects: Optional dictionary mapping names
             (strings) to custom classes or functions to be
             considered during deserialization.
@@ -534,14 +578,17 @@ def load_model(filepath, custom_objects=None, compile=True):
     """
     if h5py is None:
         raise ImportError('`load_model` requires h5py.')
-    model = None
-    opened_new_file = not isinstance(filepath, h5py.Group)
-    h5dict = H5Dict(filepath, 'r')
-    try:
-        model = _deserialize_model(h5dict, custom_objects, compile)
-    finally:
-        if opened_new_file:
-            h5dict.close()
+
+    if H5Dict.is_supported_type(filepath):
+        with H5Dict(filepath, mode='r') as h5dict:
+            model = _deserialize_model(h5dict, custom_objects, compile)
+    elif hasattr(filepath, 'write') and callable(filepath.write):
+        def load_function(h5file):
+            return _deserialize_model(H5Dict(h5file), custom_objects, compile)
+        model = load_from_binary_h5py(load_function, filepath)
+    else:
+        raise ValueError('unexpected type {} for `filepath`'.format(type(filepath)))
+
     return model
 
 
@@ -592,7 +639,10 @@ def model_from_yaml(yaml_string, custom_objects=None):
     # Returns
         A Keras model instance (uncompiled).
     """
-    config = yaml.load(yaml_string, Loader=yaml.FullLoader)
+    if hasattr(yaml, 'FullLoader'):
+        config = yaml.load(yaml_string, Loader=yaml.FullLoader)
+    else:
+        config = yaml.load(yaml_string)
     from ..layers import deserialize
     return deserialize(config, custom_objects=custom_objects)
 
@@ -788,8 +838,9 @@ def preprocess_weights_for_loading(layer, weights,
 
         # non-trainable weights
         for sublayer in layer.layers:
+            ref_ids = [id(w) for w in sublayer.trainable_weights]
             num_weights = len([l for l in sublayer.weights
-                               if l not in sublayer.trainable_weights])
+                               if id(l) not in ref_ids])
             if num_weights > 0:
                 new_weights.extend(preprocess_weights_for_loading(
                     layer=sublayer,

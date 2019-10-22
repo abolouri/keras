@@ -26,7 +26,7 @@ class MaxNorm(Constraint):
     to have a norm less than or equal to a desired value.
 
     # Arguments
-        m: the maximum norm for the incoming weights.
+        max_value: the maximum norm for the incoming weights.
         axis: integer, axis along which to calculate weight norms.
             For instance, in a `Dense` layer the weight matrix
             has shape `(input_dim, output_dim)`,
@@ -51,8 +51,7 @@ class MaxNorm(Constraint):
     def __call__(self, w):
         norms = K.sqrt(K.sum(K.square(w), axis=self.axis, keepdims=True))
         desired = K.clip(norms, 0, self.max_value)
-        w *= (desired / (K.epsilon() + norms))
-        return w
+        return w * (desired / (K.epsilon() + norms))
 
     def get_config(self):
         return {'max_value': self.max_value,
@@ -64,8 +63,7 @@ class NonNeg(Constraint):
     """
 
     def __call__(self, w):
-        w *= K.cast(K.greater_equal(w, 0.), K.floatx())
-        return w
+        return w * K.cast(K.greater_equal(w, 0.), K.floatx())
 
 
 class UnitNorm(Constraint):
@@ -136,8 +134,7 @@ class MinMaxNorm(Constraint):
         norms = K.sqrt(K.sum(K.square(w), axis=self.axis, keepdims=True))
         desired = (self.rate * K.clip(norms, self.min_value, self.max_value) +
                    (1 - self.rate) * norms)
-        w *= (desired / (K.epsilon() + norms))
-        return w
+        return w * (desired / (K.epsilon() + norms))
 
     def get_config(self):
         return {'min_value': self.min_value,
