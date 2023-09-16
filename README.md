@@ -1,64 +1,70 @@
-﻿# Keras: Deep Learning for humans
+# Keras: Deep Learning for humans
 
 ![Keras logo](https://s3.amazonaws.com/keras.io/img/keras-logo-2018-large-1200.png)
 
-[![Build Status](https://travis-ci.org/keras-team/keras.svg?branch=master)](https://travis-ci.org/keras-team/keras)
-[![license](https://img.shields.io/github/license/mashape/apistatus.svg?maxAge=2592000)](https://github.com/keras-team/keras/blob/master/LICENSE)
+This repository hosts the development of the Keras library.
+Read the documentation at [keras.io](https://keras.io/).
 
-## You have just found Keras.
+## About Keras
 
-Keras is a high-level neural networks API, written in Python and capable of running on top of [TensorFlow](https://github.com/tensorflow/tensorflow), [CNTK](https://github.com/Microsoft/cntk), or [Theano](https://github.com/Theano/Theano). It was developed with a focus on enabling fast experimentation. *Being able to go from idea to result with the least possible delay is key to doing good research.*
+Keras is a deep learning API written in Python,
+running on top of the machine learning platform [TensorFlow](https://github.com/tensorflow/tensorflow).
+It was developed with a focus on enabling fast experimentation and
+providing a delightful developer experience.
 
-Use Keras if you need a deep learning library that:
+**The purpose of Keras is to give an *unfair advantage* to any developer looking to ship ML-powered apps.**
 
-- Allows for easy and fast prototyping (through user friendliness, modularity, and extensibility).
-- Supports both convolutional networks and recurrent networks, as well as combinations of the two.
-- Runs seamlessly on CPU and GPU.
+Keras is:
 
-Read the documentation at [Keras.io](https://keras.io).
+-   **Simple** -- but not simplistic. Keras reduces developer *cognitive load*
+    to free you to focus on the parts of the problem that really matter.
+    Keras focuses on ease of use, debugging speed, code elegance & conciseness,
+    maintainability, and deployability (via TFServing, TFLite, TF.js).
+-   **Flexible** -- Keras adopts the principle of *progressive disclosure of
+    complexity*: simple workflows should be quick and easy, while arbitrarily
+    advanced workflows should be *possible* via a clear path that builds upon
+    what you've already learned.
+-   **Powerful** -- Keras provides industry-strength performance and
+    scalability: it is used by organizations and companies including NASA,
+    YouTube, and Waymo. That's right -- your YouTube recommendations are
+    powered by Keras, and so is the world's most advanced driverless vehicle.
 
-Keras is compatible with: __Python 2.7-3.6__.
+---
 
+## Keras & TensorFlow 2
 
-------------------
+[TensorFlow 2](https://www.tensorflow.org/) is an end-to-end, open-source machine learning platform.
+You can think of it as an infrastructure layer for
+[differentiable programming](https://en.wikipedia.org/wiki/Differentiable_programming).
+It combines four key abilities:
 
-## Multi-backend Keras and tf.keras:
+- Efficiently executing low-level tensor operations on CPU, GPU, or TPU.
+- Computing the gradient of arbitrary differentiable expressions.
+- Scaling computation to many devices, such as clusters of hundreds of GPUs.
+- Exporting programs ("graphs") to external runtimes such as servers, browsers, mobile and embedded devices.
 
-**At this time, we recommend that Keras users who use multi-backend Keras with the TensorFlow backend switch to `tf.keras` in TensorFlow 2.0**. `tf.keras` is better maintained and has better integration with TensorFlow features (eager execution, distribution support and other).
+Keras is the high-level API of TensorFlow 2: an approachable, highly-productive interface
+for solving machine learning problems,
+with a focus on modern deep learning. It provides essential abstractions and building blocks for developing
+and shipping machine learning solutions with high iteration velocity.
 
-Keras 2.2.5 was the last release of Keras implementing the 2.2.* API. It was the last release to only support TensorFlow 1 (as well as Theano and CNTK).
+Keras empowers engineers and researchers to take full advantage of the scalability
+and cross-platform capabilities of TensorFlow 2: you can run Keras on TPU or on large clusters of GPUs,
+and you can export your Keras models to run in the browser or on a mobile device.
 
-The current release is Keras 2.3.0, which makes significant API changes and add support for TensorFlow 2.0. The 2.3.0 release will be the last major release of multi-backend Keras. Multi-backend Keras is superseded by `tf.keras`.
+---
 
-Bugs present in multi-backend Keras will only be fixed until April 2020 (as part of minor releases).
+## First contact with Keras
 
-For more information about the future of Keras, see [the Keras meeting notes](http://bit.ly/keras-meeting-notes).
-
-
-------------------
-
-## Guiding principles
-
-- __User friendliness.__ Keras is an API designed for human beings, not machines. It puts user experience front and center. Keras follows best practices for reducing cognitive load: it offers consistent & simple APIs, it minimizes the number of user actions required for common use cases, and it provides clear and actionable feedback upon user error.
-
-- __Modularity.__ A model is understood as a sequence or a graph of standalone, fully configurable modules that can be plugged together with as few restrictions as possible. In particular, neural layers, cost functions, optimizers, initialization schemes, activation functions and regularization schemes are all standalone modules that you can combine to create new models.
-
-- __Easy extensibility.__ New modules are simple to add (as new classes and functions), and existing modules provide ample examples. To be able to easily create new modules allows for total expressiveness, making Keras suitable for advanced research.
-
-- __Work with Python__. No separate models configuration files in a declarative format. Models are described in Python code, which is compact, easier to debug, and allows for ease of extensibility.
-
-
-------------------
-
-
-## Getting started: 30 seconds to Keras
-
-The core data structure of Keras is a __model__, a way to organize layers. The simplest type of model is the [`Sequential`](https://keras.io/getting-started/sequential-model-guide) model, a linear stack of layers. For more complex architectures, you should use the [Keras functional API](https://keras.io/getting-started/functional-api-guide), which allows to build arbitrary graphs of layers.
+The core data structures of Keras are __layers__ and __models__.
+The simplest type of model is the [`Sequential` model](https://keras.io/guides/sequential_model/), a linear stack of layers.
+For more complex architectures, you should use the [Keras functional API](https://keras.io/guides/functional_api/),
+which allows you to build arbitrary graphs of layers or [write models entirely from scratch via subclassing](https://keras.io/guides/making_new_layers_and_models_via_subclassing/).
 
 Here is the `Sequential` model:
 
 ```python
-from keras.models import Sequential
+from tensorflow.keras.models import Sequential
 
 model = Sequential()
 ```
@@ -66,9 +72,9 @@ model = Sequential()
 Stacking layers is as easy as `.add()`:
 
 ```python
-from keras.layers import Dense
+from tensorflow.keras.layers import Dense
 
-model.add(Dense(units=64, activation='relu', input_dim=100))
+model.add(Dense(units=64, activation='relu'))
 model.add(Dense(units=10, activation='softmax'))
 ```
 
@@ -80,26 +86,23 @@ model.compile(loss='categorical_crossentropy',
               metrics=['accuracy'])
 ```
 
-If you need to, you can further configure your optimizer. A core principle of Keras is to make things reasonably simple, while allowing the user to be fully in control when they need to (the ultimate control being the easy extensibility of the source code).
+If you need to, you can further configure your optimizer. The Keras philosophy is to keep simple things simple,
+while allowing the user to be fully in control when they need to be (the ultimate control being the easy extensibility of the source code via subclassing).
+
 ```python
-model.compile(loss=keras.losses.categorical_crossentropy,
-              optimizer=keras.optimizers.SGD(lr=0.01, momentum=0.9, nesterov=True))
+model.compile(loss=tf.keras.losses.categorical_crossentropy,
+              optimizer=tf.keras.optimizers.SGD(
+                  learning_rate=0.01, momentum=0.9, nesterov=True))
 ```
 
 You can now iterate on your training data in batches:
 
 ```python
-# x_train and y_train are Numpy arrays --just like in the Scikit-Learn API.
+# x_train and y_train are Numpy arrays.
 model.fit(x_train, y_train, epochs=5, batch_size=32)
 ```
 
-Alternatively, you can feed batches to your model manually:
-
-```python
-model.train_on_batch(x_batch, y_batch)
-```
-
-Evaluate your performance in one line:
+Evaluate your test loss and metrics in one line:
 
 ```python
 loss_and_metrics = model.evaluate(x_test, y_test, batch_size=128)
@@ -111,93 +114,100 @@ Or generate predictions on new data:
 classes = model.predict(x_test, batch_size=128)
 ```
 
-Building a question answering system, an image classification model, a Neural Turing Machine, or any other model is just as fast. The ideas behind deep learning are simple, so why should their implementation be painful?
+What you just saw is the most elementary way to use Keras.
 
-For a more in-depth tutorial about Keras, you can check out:
+However, Keras is also a highly-flexible framework suitable to iterate on state-of-the-art research ideas.
+Keras follows the principle of **progressive disclosure of complexity**: it makes it easy to get started,
+yet it makes it possible to handle arbitrarily advanced use cases,
+only requiring incremental learning at each step.
 
-- [Getting started with the Sequential model](https://keras.io/getting-started/sequential-model-guide)
-- [Getting started with the functional API](https://keras.io/getting-started/functional-api-guide)
+In pretty much the same way that you were able to train & evaluate a simple neural network above in a few lines,
+you can use Keras to quickly develop new training procedures or exotic model architectures.
+Here's a low-level training loop example, combining Keras functionality with the TensorFlow `GradientTape`:
 
-In the [examples folder](https://github.com/keras-team/keras/tree/master/examples) of the repository, you will find more advanced models: question-answering with memory networks, text generation with stacked LSTMs, etc.
+```python
+import tensorflow as tf
 
+# Prepare an optimizer.
+optimizer = tf.keras.optimizers.Adam()
+# Prepare a loss function.
+loss_fn = tf.keras.losses.kl_divergence
 
-------------------
+# Iterate over the batches of a dataset.
+for inputs, targets in dataset:
+    # Open a GradientTape.
+    with tf.GradientTape() as tape:
+        # Forward pass.
+        predictions = model(inputs)
+        # Compute the loss value for this batch.
+        loss_value = loss_fn(targets, predictions)
 
+    # Get gradients of loss wrt the weights.
+    gradients = tape.gradient(loss_value, model.trainable_weights)
+    # Update the weights of the model.
+    optimizer.apply_gradients(zip(gradients, model.trainable_weights))
+```
+
+For more in-depth tutorials about Keras, you can check out:
+
+-   [Introduction to Keras for engineers](https://keras.io/getting_started/intro_to_keras_for_engineers/)
+-   [Introduction to Keras for researchers](https://keras.io/getting_started/intro_to_keras_for_researchers/)
+-   [Developer guides](https://keras.io/guides/)
+-   [Other learning resources](https://keras.io/getting_started/learning_resources/)
+
+---
 
 ## Installation
 
-Before installing Keras, please install one of its backend engines: TensorFlow, Theano, or CNTK. We recommend the TensorFlow backend.
+Keras comes packaged with TensorFlow 2 as `tensorflow.keras`.
+To start using Keras, simply [install TensorFlow 2](https://www.tensorflow.org/install).
+You can then import Keras as follows:
 
-- [TensorFlow installation instructions](https://www.tensorflow.org/install/).
-- [Theano installation instructions](http://deeplearning.net/software/theano/install.html#install).
-- [CNTK installation instructions](https://docs.microsoft.com/en-us/cognitive-toolkit/setup-cntk-on-your-machine).
-
-You may also consider installing the following **optional dependencies**:
-
-- [cuDNN](https://docs.nvidia.com/deeplearning/sdk/cudnn-install/) (recommended if you plan on running Keras on GPU).
-- HDF5 and [h5py](http://docs.h5py.org/en/latest/build.html) (required if you plan on saving Keras models to disk).
-- [graphviz](https://graphviz.gitlab.io/download/) and [pydot](https://github.com/erocarrera/pydot) (used by [visualization utilities](https://keras.io/visualization/) to plot model graphs).
-
-Then, you can install Keras itself. There are two ways to install Keras:
-
-- **Install Keras from PyPI (recommended):**
-
-Note: These installation steps assume that you are on a Linux or Mac environment.
-If you are on Windows, you will need to remove `sudo` to run the commands below.
-
-```sh
-sudo pip install keras
+```python
+from tensorflow import keras
 ```
 
-If you are using a virtualenv, you may want to avoid using sudo:
+---
 
-```sh
-pip install keras
-```
+## Release and compatibility
 
-- **Alternatively: install Keras from the GitHub source:**
+Keras has **nightly releases** (`keras-nightly` on PyPI)
+and **stable releases** (`keras` on PyPI).
+The nightly Keras releases are usually compatible with the corresponding version
+of the `tf-nightly` releases
+(e.g. `keras-nightly==2.7.0.dev2021100607` should be
+used with `tf-nightly==2.7.0.dev2021100607`).
+We don't maintain backward compatibility for nightly releases.
+For stable releases, each Keras
+version maps to a specific stable version of TensorFlow.
 
-First, clone Keras using `git`:
+The table below shows the compatibility version mapping
+between TensorFlow versions and Keras versions.
 
-```sh
-git clone https://github.com/keras-team/keras.git
-```
+All the release branches can be found on [GitHub](https://github.com/keras-team/keras/releases).
 
- Then, `cd` to the Keras folder and run the install command:
-```sh
-cd keras
-sudo python setup.py install
-```
+All the release binaries can be found on [Pypi](https://pypi.org/project/keras/#history).
 
-------------------
-
-
-## Configuring your Keras backend
-
-By default, Keras will use TensorFlow as its tensor manipulation library. [Follow these instructions](https://keras.io/backend/) to configure the Keras backend.
-
-------------------
-
-
+---
 ## Support
 
 You can ask questions and join the development discussion:
 
-- On the [Keras Google group](https://groups.google.com/forum/#!forum/keras-users).
-- On the [Keras Slack channel](https://kerasteam.slack.com). Use [this link](https://keras-slack-autojoin.herokuapp.com/) to request an invitation to the channel.
+- In the [TensorFlow forum](https://discuss.tensorflow.org/).
+- On the [Keras mailing list](https://groups.google.com/forum/#!forum/keras-users).
 
-You can also post **bug reports and feature requests** (only) in [GitHub issues](https://github.com/keras-team/keras/issues). Make sure to read [our guidelines](https://github.com/keras-team/keras/blob/master/CONTRIBUTING.md) first.
+---
+
+## Opening an issue
+
+You can also post **bug reports and feature requests** (only)
+in [GitHub issues](https://github.com/keras-team/keras/issues).
 
 
-------------------
+---
 
+## Opening a PR
 
-## Why this name, Keras?
-
-Keras (κέρας) means _horn_ in Greek. It is a reference to a literary image from ancient Greek and Latin literature, first found in the _Odyssey_, where dream spirits (_Oneiroi_, singular _Oneiros_) are divided between those who deceive men with false visions, who arrive to Earth through a gate of ivory, and those who announce a future that will come to pass, who arrive through a gate of horn. It's a play on the words κέρας (horn) / κραίνω (fulfill), and ἐλέφας (ivory) / ἐλεφαίρομαι (deceive).
-
-Keras was initially developed as part of the research effort of project ONEIROS (Open-ended Neuro-Electronic Intelligent Robot Operating System).
-
->_"Oneiroi are beyond our unravelling --who can be sure what tale they tell? Not all that men look for comes to pass. Two gates there are that give passage to fleeting Oneiroi; one is made of horn, one of ivory. The Oneiroi that pass through sawn ivory are deceitful, bearing a message that will not be fulfilled; those that come out through polished horn have truth behind them, to be accomplished for men who see them."_ Homer, Odyssey 19. 562 ff (Shewring translation).
-
-------------------
+We welcome contributions! Before opening a PR, please read
+[our contributor guide](https://github.com/keras-team/keras/blob/master/CONTRIBUTING.md),
+and the [API design guideline](https://github.com/keras-team/governance/blob/master/keras_api_design_guidelines.md).

@@ -1,24 +1,21 @@
-*.DS_Store
-*.pyc
+# macOS
+.DS_Store
+
+# Python temp files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Vim temp files
 *.swp
-temp/*
-dist/*
-build/*
-keras/datasets/data/*
-keras/datasets/temp/*
-docs/site/*
-docs/sources/*
-docs/theme/fonts/*
-docs/theme/img/*
-tags
-Keras.egg-info
-examples/img/*
+*.swo
 
-# test-related
-.coverage
-.cache
-.pytest_cache
-
-# developer environments
-.idea
+# VS Code configs
+.devcontainer
 .vscode
+
+# Bazel files
+bazel-bin
+bazel-keras
+bazel-out
+bazel-testlogs

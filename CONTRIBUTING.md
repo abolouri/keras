@@ -1,97 +1,316 @@
-# On Github Issues and Pull Requests
+## How to contribute code
 
-Found a bug? Have a new feature to suggest? Want to contribute changes to the codebase? Make sure to read this first.
+Follow these steps to submit your code contribution.
 
-## Bug reporting
+### Step 1. Open an issue
 
-Your code doesn't work, and you have determined that the issue lies with Keras? Follow these steps to report a bug.
+Before making any changes, we recommend opening an issue (if one doesn't already
+exist) and discussing your proposed changes. This way, we can give you feedback
+and validate the proposed changes.
 
-1. Your bug may already be fixed. Make sure to update to the current Keras master branch, as well as the latest Theano/TensorFlow/CNTK master branch.
-To easily update Theano: `pip install git+git://github.com/Theano/Theano.git --upgrade`
+If the changes are minor (simple bug fix or documentation fix), then feel free
+to open a PR without discussion.
 
-2. Search for similar issues. Make sure to delete `is:open` on the issue search to find solved tickets as well. It's possible somebody has encountered this bug already. Also remember to check out Keras' [FAQ](http://keras.io/faq/). Still having a problem? Open an issue on Github to let us know.
+### Step 2. Make code changes
 
-3. Make sure you provide us with useful information about your configuration: what OS are you using? What Keras backend are you using? Are you running on GPU? If so, what is your version of Cuda, of cuDNN? What is your GPU?
+To make code changes, you need to fork the repository. You will need to setup a
+development environment and run the unit tests. This is covered in the section
+"Setup environment".
 
-4. Provide us with a script to reproduce the issue. This script should be runnable as-is and should not require external data download (use randomly generated data if you need to run a model on some test data). We recommend that you use Github Gists to post your code. Any issue that cannot be reproduced is likely to be closed.
+### Step 3. Create a pull request
 
-5. If possible, take a stab at fixing the bug yourself --if you can!
+Once the change is ready, open a pull request from your branch in your fork to
+the master branch in [keras-team/keras](https://github.com/keras-team/keras).
 
-The more information you provide, the easier it is for us to validate that there is a bug and the faster we'll be able to take action. If you want your issue to be resolved quickly, following the steps above is crucial.
+### Step 4. Sign the Contributor License Agreement
 
----
+After creating the pull request, the `google-cla` bot will comment on your pull
+request with instructions on signing the Contributor License Agreement (CLA) if
+you haven't done so. Please follow the instructions to sign the CLA. A `cla:yes`
+tag is then added to the pull request.
 
-## Requesting a Feature
-
-You can also use [Tensorflow Github issues](https://github.com/tensorflow/tensorflow/issues) to request features you would like to see in Keras, or changes in the Keras API.
-
-1. Provide a clear and detailed explanation of the feature you want and why it's important to add. Keep in mind that we want features that will be useful to the majority of our users and not just a small subset. If you're just targeting a minority of users, consider writing an add-on library for Keras. It is crucial for Keras to avoid bloating the API and codebase.
-
-2. Provide code snippets demonstrating the API you have in mind and illustrating the use cases of your feature. Of course, you don't need to write any real code at this point!
-
-3. After discussing the feature you may choose to attempt a Pull Request on tf.keras. If you're at all able, start writing some code. We always have more work to do than time to do it. If you can write some code then that will speed the process along.
-
-
----
-
-## Requests for Contributions
-
-[This is the board](https://github.com/keras-team/keras/projects/1) where we list current outstanding issues and features to be added. If you want to start contributing to Keras, this is the place to start.
+![Tag added](https://i.imgur.com/LHEdIfL.png)
 
 
----
+### Step 5. Code review
 
-## Pull Requests
+A reviewer will review the pull request and provide comments. The reviewer may
+add a `kokoro:force-run` label to trigger the continuous integration tests.
 
-**Where should I submit my pull request?**
+![CI tests tag](https://i.imgur.com/58NOCB0.png)
 
-#### Note:
+If the tests fail, look into the error messages and try to fix them.
 
-We are no longer adding new features to multi-backend Keras (we only fix bugs), as we are refocusing development efforts on tf.keras. If you are still interested in submitting a feature pull request, please direct it to tf.keras in the TensorFlow repository instead.
+![CI tests](https://i.imgur.com/vVY0dZD.png)
 
-1. **Keras improvements and bugfixes** go to the [Keras `master` branch](https://github.com/keras-team/keras/tree/master).
-2. **Experimental new features** such as layers and datasets go to [keras-contrib](https://github.com/farizrahman4u/keras-contrib). Unless it is a new feature listed in [Requests for Contributions](https://github.com/keras-team/keras/projects/1), in which case it belongs in core Keras. If you think your feature belongs in core Keras, you can submit a design doc to explain your feature and argue for it (see explanations below).
+There may be
+several rounds of comments and code changes before the pull request gets
+approved by the reviewer.
 
-Please note that PRs that are primarily about **code style** (as opposed to fixing bugs, improving docs, or adding new functionality) will likely be rejected.
+![Approval from reviewer](https://i.imgur.com/Ywl4ets.png)
 
-Here's a quick guide to submitting your improvements:
+### Step 6. Merging
 
-1. If your PR introduces a change in functionality, make sure you start by writing a design doc and sending it to the Keras mailing list to discuss whether the change should be made, and how to handle it. This will save you from having your PR closed down the road! Of course, if your PR is a simple bug fix, you don't need to do that. The process for writing and submitting design docs is as follow:
-    - Start from [this Google Doc template](https://docs.google.com/document/d/1ZXNfce77LDW9tFAj6U5ctaJmI5mT7CQXOFMEAZo-mAA/edit#), and copy it to new Google doc.
-    - Fill in the content. Note that you will need to insert code examples. To insert code, use a Google Doc extension such as [CodePretty](https://chrome.google.com/webstore/detail/code-pretty/igjbncgfgnfpbnifnnlcmjfbnidkndnh?hl=en) (there are several such extensions available).
-    - Set sharing settings to "everyone with the link is allowed to comment"
-    - Send the document to `keras-users@googlegroups.com` with a subject that starts with `[API DESIGN REVIEW]` (all caps) so that we notice it.
-    - Wait for comments, and answer them as they come. Edit the proposal as necessary.
-    - The proposal will finally be approved or rejected. Once approved, you can send out Pull Requests or ask others to write Pull Requests.
+Once the pull request is approved, a `ready to pull` tag will be added to the
+pull request. A team member will take care of the merging.
+
+![Ready to pull](https://i.imgur.com/yCEqJsA.png)
+
+Here is an [example pull request](https://github.com/keras-team/keras/pull/15015)
+for your reference.
+
+## Setup environment
+
+To setup the development environment, We provide two options. One is to use our
+Dockerfile, which builds into a container the required dev tools. Another one is
+to setup a local environment by installing the dev tools needed.
+
+### Option 1: Use a Docker container
+
+We provide a
+[Dockerfile](https://github.com/keras-team/keras/blob/master/.devcontainer/Dockerfile)
+to build the dev environment. You can build the Dockerfile into a Docker image
+named `keras-dev` with the following command at the root directory of your
+cloned repo.
+
+```shell
+docker build -t keras-dev .devcontainer
+```
+
+You can launch a Docker container from the image with the following command. The
+`-it` option gives you an interactive shell of the container. The `-v
+path/to/repo/:/home/keras/` mounts your cloned repo to the container. Replace
+`path/to/repo` with the path to your cloned repo directory.
+
+```shell
+docker run -it -v path/to/repo/:/home/keras/ keras-dev
+```
+
+In the container shell, you need to install the latest dependencies with the
+following command.
+
+```shell
+pip install -r /home/keras/requirements.txt && pip uninstall keras-nightly -y
+```
+
+Now, the environment setup is complete. You are ready to run the tests.
+
+You may modify the Dockerfile to your specific needs, like installing your own
+dev tools. You may also mount more volumes with the `-v` option, like your SSH
+credentials.
+
+Many popular editors today support developing in a container. Here is the list of
+[supported editors](https://discuss.tensorflow.org/t/setup-your-favorite-editor-to-develop-keras)
+with setup instructions.
+
+### Option 2: Setup a local environment
+
+To setup your local dev environment, you will need the following tools.
+
+1.  [Bazel](https://bazel.build/) is the tool to build and test Keras. See the
+    [installation guide](https://docs.bazel.build/versions/4.0.0/install.html)
+    for how to install and config bazel for your local environment.
+2.  [git](https://github.com/) for code repository management.
+3.  [python](https://www.python.org/) to build and code in Keras.
+
+The following commands check the tools above are successfully installed. Note
+that Keras requires at least Python 3.7 to run.
+
+```shell
+bazel --version
+git --version
+python --version
+```
+
+A [Python virtual environment](https://docs.python.org/3/tutorial/venv.html)
+(venv) is a powerful tool to create a self-contained environment that isolates
+any change from the system level config. It is highly recommended to avoid any
+unexpected dependency or version issues.
+
+With the following commands, you create a new venv, named `venv_dir`.
+
+```shell
+mkdir venv_dir
+python3 -m venv venv_dir
+```
+
+You can activate the venv with the following command. You should always run the
+tests with the venv activated. You need to activate the venv every time you open
+a new shell.
+
+```shell
+source venv_dir/bin/activate  # for Linux or MacOS
+venv_dir\Scripts\activate.bat  # for Windows
+```
+
+Clone your forked repo to your local machine. Go to the cloned directory to
+install the dependencies into the venv. Since `tf-nightly` uses `keras-nightly`
+as a dependency, we need to uninstall `keras-nightly` so that tests will run
+against Keras code in the local workspace.
+
+```shell
+git clone https://github.com/YOUR_GITHUB_USERNAME/keras.git
+cd keras
+pip install -r requirements.txt
+pip uninstall keras-nightly
+```
+
+The environment setup is completed. You may need to update the `tf-nightly`
+version regularly to keep your environment up-to-date with the following
+command.
+
+```shell
+pip install --upgrade tf-nightly
+```
+
+## Code style
+
+The Keras uses [Black](https://black.readthedocs.io/en/stable/) and
+[isort](https://pycqa.github.io/isort/) to format the code. Please refer to
+[requirements.txt](https://github.com/keras-team/keras/blob/master/requirements.txt)
+for the required versions. Run the following command **at the root directory of
+the repo** to format your code.
+
+```
+sh shell/format.sh
+```
+
+It will also display the errors that cannot be resolved by autoformatting. You
+need to follow the output of the command to resolve them manually.
+
+If you do not want to auto format the code but only show the lint errors, you
+can run `sh shell/lint.sh` **at the root directory of the repo**.
+
+### Docstrings
+
+We do not have an automated way to check docstring style, so if you write
+or edit any docstring, please make sure to check them manually.
+Keras docstrings follow the conventions below:
+
+A **class docstring** may contain the following items:
+
+* A one-line description of the class.
+* Paragraph(s) of more detailed information.
+* Optional `Examples` section.
+* `Args` section for arguments in `__init__()`.
+* If it's a layer:
+    * `Call arguments` section for arguments in `Layer.call()`.
+    * `Returns` section for the return values of `Layer.call()`.
+    * Optional `Raises` section for possible errors.
+
+You can check out `MultiHeadAttention` as an example
+[(link)](https://github.com/keras-team/keras/blob/v2.12.0-rc1/keras/layers/attention/multi_head_attention.py#L131).
+
+A **function docstring** may contain the following items:
+
+* One-line description of the function.
+* Paragraph(s) of more detailed information.
+* Optional `Examples` section.
+* `Args` section for the function arguments.
+* `Returns` section for the return values.
+* Optional `Raises` section for possible errors.
+
+You can check out `text_dataset_from_directory` as an example
+[(link)](https://github.com/keras-team/keras/blob/v2.12.0-rc1/keras/utils/text_dataset.py#L31).
 
 
-2. Write the code (or get others to write it). This is the hard part!
+## Run tests
 
-3. Make sure any new function or class you introduce has proper docstrings. Make sure any code you touch still has up-to-date docstrings and documentation. **Docstring style should be respected.** In particular, they should be formatted in MarkDown, and there should be sections for `Arguments`, `Returns`, `Raises` (if applicable). Look at other docstrings in the codebase for examples.
+We use [Bazel](https://bazel.build/) to build and run the tests.
 
-4. Write tests. Your code should have full unit test coverage. If you want to see your PR merged promptly, this is crucial.
+### Run a test file
 
-5. Run our test suite locally. It's easy: from the Keras folder, simply run: `py.test tests/`.
-    - You will need to install the test requirements as well: `pip install -e .[tests]`.
+For example, to run the tests in `keras/engine/base_layer_test.py`,
+we can run the following command at the root directory of the repo.
 
-6. Make sure all tests are passing:
-    - with the Theano backend, on Python 2.7 and Python 3.6. Make sure you have the development version of Theano.
-    - with the TensorFlow backend, on Python 2.7 and Python 3.6. Make sure you have the development version of TensorFlow.
-    - with the CNTK backend, on Python 2.7 and Python 3.6. Make sure you have the development version of CNTK.
+```shell
+bazel test keras/engine:base_layer_test
+```
 
-7. We use PEP8 syntax conventions, but we aren't dogmatic when it comes to line length. Make sure your lines stay reasonably sized, though. To make your life easier, we recommend running a PEP8 linter:
-    - Install PEP8 packages: `pip install pep8 pytest-pep8 autopep8`
-    - Run a standalone PEP8 check: `py.test --pep8 -m pep8`
-    - You can automatically fix some PEP8 error by running: `autopep8 -i --select <errors> <FILENAME>` for example: `autopep8 -i --select E128 tests/keras/backend/test_backends.py`
+`keras/engine` is the relative path to the directory containing the `BUILD` file
+defining the test. `base_layer_test` is the test target name defined with
+`tf_py_test` in the `BUILD` file.
 
-8. When committing, use appropriate, descriptive commit messages.
+### Run a single test case
 
-9. Update the documentation. If introducing new functionality, make sure you include code snippets demonstrating the usage of your new feature.
+To run a single test, you can use `--test_filter=<your_regex>`
+to use the regular expression to match the test you want to run. For example, you
+can use the following command to run all the tests in `activations_test.py`,
+whose names contain `test_serialization`.
 
-10. Submit your PR. If your changes have been approved in a previous discussion, and if you have complete (and passing) unit tests as well as proper docstrings/documentation, your PR is likely to be merged promptly.
+```
+bazel test keras:activations_test --test_filter=*test_serialization*
+```
 
----
+### Run all tests
 
-## Adding new examples
+You can run all the tests locally by running the following command in the repo
+root directory.
 
-Even if you don't contribute to the Keras source code, if you have an application of Keras that is concise and powerful, please consider adding it to our collection of examples. [Existing examples](https://github.com/keras-team/keras/tree/master/examples) show idiomatic Keras code: make sure to keep your own script in the same spirit.
+```
+bazel test --test_timeout 300,450,1200,3600 --test_output=errors --keep_going --define=use_fast_cpp_protos=false --build_tests_only --build_tag_filters=-no_oss,-oss_excluded --test_tag_filters=-no_oss,-oss_excluded keras/...
+```
+
+### Useful configs
+
+Here we provide a list of useful configs you can use with Bazel.
+
+```shell
+bazel test [CONFIGS] [YOUR_TEST]
+```
+
+To use these configs, just replace `[CONFIGS]` with the actual config in the
+command above.
+* `-c opt` enables the optimizations during the build.
+* `--test_sharding_strategy=disabled` disables the sharding so that all the
+  test outputs are in one file.
+  However, it may slow down the tests for not running in parallel
+  and may cause the test to timeout.
+
+## Contributing to Keras applications
+
+Contributions to the
+[pre-trained application library](https://keras.io/api/applications/) are
+welcome. Code for Keras applications is located in Keras repository in
+[keras/applications](https://github.com/keras-team/keras/blob/master/keras/applications).
+When contributing to Keras applications, please keep following checklist in
+mind.
+
+-   Keras applications must implement an established and widely used model.
+    Applications should include a link to a paper describing the architecture of
+    the model with at least 20 citations.
+-   Applications should be provided with pre-trained weights.
+    -   When submitting a pull request for a Keras application, these weights
+        can be provided at any publically available URL (e.g. a personal Cloud
+        Storage bucket). The weights will be uploaded to a Keras storage bucket
+        while merging the pull request.
+    -   Weights should be downloaded with the
+        [get_file()](https://keras.io/api/utils/python_utils/#getfile-function)
+        utility function. Be sure to include the `file_hash` argument, which
+        allows cache invalidation on the downloaded weights. The command line
+        programs `shasum` and `sha256sum` can compute a file hash.
+-   You should help us verify that the accuracy of the model with pre-trained
+    weighted matches the reported results of the cited paper.
+-   You should add any new applications to the unit tests defined in
+    `applications_test.py` and `applications_load_weight_test.py`.
+-   For backwards compatibility, all applications should provide a
+    `preprocess_input()` function. For new applications, you should leave the
+    function empty (pass through inputs unaltered), and write the model so it
+    can handle raw inputs directly. Adding
+    [preprocessing layers](https://keras.io/guides/preprocessing_layers/) to the
+    application model may help with this. For image applications, a
+    [Rescaling](https://keras.io/api/layers/preprocessing_layers/image_preprocessing/rescaling/)
+    layer at the beginning of the model is often all that is needed.
+-   Once the PR is approved, you should create a companion PR to the keras.io
+    [application page](https://keras.io/api/applications/) updating the
+    "Available Models" section. The contribution guide for keras.io can be found
+    [here](https://github.com/keras-team/keras-io/blob/master/contributor_guide.md).
+-   As every PR requires several CPU/GPU hours of CI testing, we discourage
+    submitting PRs to fix one typo, one warning,etc. We recommend fixing the
+    same issue at the file level at least (e.g.: fix all typos in a file, fix
+    all compiler warnings in a file, etc.)
+
+## Security vulnerability reports
+
+Since Keras is the high-level API of TensorFlow 2, Keras follows same security practices as TensorFlow.
+For details on guidelines on vulnerabilities and reporting them, you can refer [Using TensorFlow Securely](https://github.com/tensorflow/tensorflow/blob/master/SECURITY.md). 
